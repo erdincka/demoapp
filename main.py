@@ -44,6 +44,17 @@ async def run_command(command: str) -> None:
 with ui.dialog() as dialog, ui.card():
     result = ui.markdown()
 
+
+def get_config_tar(param):
+    print(param)
+    
+def get_jwt_tokens(param):
+    print(param)
+
+with ui.row().classes("w-full"):
+    ui.upload("config.tar", on_upload=get_config_tar)
+    ui.upload("jwt_tokens.tar.gz", on_upload=get_jwt_tokens)
+
 with ui.row().classes("w-full"):
     with ui.card():
         ui.label("Multi Modal").classes("text-xl")
