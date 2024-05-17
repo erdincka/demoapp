@@ -82,5 +82,6 @@ if __name__ in {"__main__", "__mp_main__"}:
     ui.run(
         title="Demo",
         dark=None,
+        port=3000,
         # NOTE: On Windows reload must be disabled to make asyncio.create_subprocess_exec work (see https://github.com/zauberzeug/nicegui/issues/486)
         reload=platform.system() != 'Windows')
