@@ -7,7 +7,8 @@ import random
 from nicegui import ui, app
 
 from helpers import *
-import ingest, modals
+from functions import *
+import ingest, modals, eventstore
 
 logging.basicConfig()
 logger = logging.getLogger()
@@ -26,7 +27,7 @@ async def home():
         ui.label(f"{APP_NAME}: {TITLE}").classes("text-xl")
         ui.space()
         ui.label().classes("uppercase").bind_text_from(app.storage.general, "cluster")
-        target=f"https://{os.environ.get('MAPR_USER', 'mapr')}:{os.environ.get('MAPR_PASS', 'mapr123')}@{app.storage.general['cluster']}:8443/"
+        target=f"https://{os.environ.get('MAPR_USER', 'mapr')}:{os.environ.get('MAPR_PASS', 'mapr123')}@{app.storage.general.get('cluster', 'localhost')}:8443/"
         ui.space()
         ui.switch("Show code").bind_value(app.storage.general, "showcode")
         ui.switch("Basics").bind_value(app.storage.general, "basics")
@@ -84,13 +85,13 @@ async def home():
             with ui.card().classes("w-full").bind_visibility(app.storage.general, "basics"):
                 ui.label("Multi Protocol").classes("text-xl")
                 ui.label("HDFS")
-                ui.code(inspect.getsource(getattr(ingest, "hdfs"))).classes("w-full text-wrap").bind_visibility_from(app.storage.general, "showcode")
+                ui.code(inspect.getsource(ingest.hdfs)).classes("w-full text-wrap").bind_visibility_from(app.storage.general, "showcode")
                 ui.button("Run")
                 ui.label("RESTful")
-                ui.code(inspect.getsource(getattr(ingest, "restful"))).classes("w-full text-wrap").bind_visibility_from(app.storage.general, "showcode")
+                ui.code(inspect.getsource(ingest.restful)).classes("w-full text-wrap").bind_visibility_from(app.storage.general, "showcode")
                 ui.button("Run")
                 ui.label("NoSQL Database")
-                ui.code(inspect.getsource(getattr(ingest, "nosql"))).classes("w-full text-wrap").bind_visibility_from(app.storage.general, "showcode")
+                ui.code(inspect.getsource(ingest.nosql)).classes("w-full text-wrap").bind_visibility_from(app.storage.general, "showcode")
                 ui.button("Run")
 
             with ui.card().classes("w-full"):
@@ -99,30 +100,31 @@ async def home():
                     ui.button("Refresh", on_click=clusters.update)
                     ui.space()
                     ui.label().bind_text_from(app.storage.general, "cluster")
-                ui.label("DF Constructs").classes("bold")
-                ui.button("Get volumes", on_click=get_volumes)
-                ui.table(
-                    title="Volumes",
-                    columns=[
-                        {
-                            "name": "title",
-                            "label": "Title",
-                            "field": "title",
-                            "required": True,
-                            "align": "left",
-                        },
-                        {
-                            "name": "status",
-                            "label": "Status",
-                            "field": "status",
-                        }
-                    ],
-                    rows=[],
-                    row_key="id",
-                    pagination=0,
-                ).on("rowClick", lambda e: print(e.args[1])).props("dense separator=None wrap-cells flat bordered virtual-scroll").classes("w-full").style("height: 300px")
+
+                # ui.button("Get volumes", on_click=get_volumes)
+                # ui.table(
+                #     title="Volumes",
+                #     columns=[
+                #         {
+                #             "name": "name",
+                #             "label": "Name",
+                #             "field": "volid",
+                #             "required": True,
+                #             "align": "left",
+                #         },
+                #         {
+                #             "name": "mountdir",
+                #             "label": "Mounted",
+                #             "field": "mountdir",
+                #         }
+                #     ],
+                #     rows=[],
+                #     row_key="volid",
+                #     pagination=0,
+                # ).on("rowClick", lambda e: print(e.args[1])).props("dense separator=None wrap-cells flat bordered virtual-scroll").classes("w-full").style("height: 300px")
 
                 ui.button("Stream", on_click=stream_messages)
+                ui.code(inspect.getsource(eventstore.produce))
 
 # check if already configured
 app.storage.general["client_configured"] = is_configured()

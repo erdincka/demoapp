@@ -1,16 +1,14 @@
 import logging
-from time import sleep
-import timeit
 
 logger = logging.getLogger()
 
-def produce(cluster: str, stream: str, topic: str, record: str):
+def produce(stream: str, topic: str, record: str):
     from confluent_kafka import Producer
 
     p = Producer({"streams.producer.default.stream": stream})
 
     try:
-        logger.debug("pushing message: %s", record)
+        logger.info("pushing message: %s", record)
         p.produce(topic, record.encode("utf-8"))
 
     except Exception as error:
@@ -23,7 +21,7 @@ def produce(cluster: str, stream: str, topic: str, record: str):
     return True
 
 
-def consume(cluster: str, stream: str, topic: str):
+def consume(stream: str, topic: str):
     from confluent_kafka import Consumer, KafkaError
 
     consumer = Consumer(
