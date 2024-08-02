@@ -27,7 +27,7 @@ async def home():
         ui.label(f"{APP_NAME}: {TITLE}").classes("text-xl")
         ui.space()
         ui.label().classes("uppercase").bind_text_from(app.storage.general, "cluster")
-        target=f"https://{os.environ.get('MAPR_USER', 'mapr')}:{os.environ.get('MAPR_PASS', 'mapr123')}@{app.storage.general.get('cluster', 'localhost')}:8443/"
+        # target = f"https://{os.environ.get('MAPR_USER', 'mapr')}:{os.environ.get('MAPR_PASS', 'mapr123')}@{app.storage.general.get('cluster', 'localhost')}:8443/"
         ui.space()
         ui.switch("Show code").bind_value(app.storage.general, "showcode")
         ui.switch("Basics").bind_value(app.storage.general, "basics")

@@ -29,7 +29,7 @@ def is_configured():
     """
     Check if all client configuration files in place
     """
-    files = ["/opt/mapr/conf/mapr-clusters.conf", "/opt/mapr/conf/ssl_truststore", "/opt/mapr/conf/ssl_truststore", "/root/jwt_access", "/root/jwt_refresh"]
+    files = ["/opt/mapr/conf/mapr-clusters.conf", "/opt/mapr/conf/ssl_truststore", "/opt/mapr/conf/ssl_truststore.pem", "/root/jwt_access", "/root/jwt_refresh"]
     return all([os.path.isfile(f) for f in files])
 
 
